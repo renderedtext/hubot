@@ -10,17 +10,15 @@
 # Commands:
 #   I am hungry
 
-
 restaurant = [
-"Stevca"
-"Pub"
-"Djordjevic"
-"Kontejner"
-"Giros"
-"Kina"
+  "Stevca"
+  "Pub"
+  "Djordjevic"
+  "Kontejner"
+  "Giros"
+  "Kina"
 ]
 
-
 module.exports = (robot) ->
-  robot.respond /I am hungry/i, (msg) ->
+  robot.respond /need food/i, (msg) ->
     msg.send msg.random restaurant
