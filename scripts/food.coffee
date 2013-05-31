@@ -11,12 +11,17 @@
 #   I am hungry
 
 restaurant = [
-  "Stevca"
-  "Pub"
-  "Djordjevic"
-  "Kontejner"
-  "Giros"
-  "Kina"
+  "stevca"
+  "pub"
+  "djordjevic"
+  "kontejner"
+  "giros"
+  "kina"
+  "foody"
+  "lipa"
+  "bistro"
+  "magaza"
+  "crna maca"
 ]
 
 module.exports = (robot) ->
