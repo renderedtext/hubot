@@ -1,5 +1,5 @@
 # Description:
-#   Richard Stallman Facts
+#  Get random place for lunch.
 #
 # Dependencies:
 #   None
@@ -9,6 +9,9 @@
 #
 # Commands:
 #   I am hungry
+#
+# Author:
+#   Rastko Jokic
 
 restaurant = [
   "stevca"
