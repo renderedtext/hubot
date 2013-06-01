@@ -20,6 +20,8 @@ To run this version of hubot + scripts that we use, you will need to set some en
     HUBOT_CAMPFIRE_ROOMS
     HUBOT_CAMPFIRE_TOKEN
     REDISTOGO_URL
+    HUBOT_SEMAPHOREAPP_AUTH_TOKEN
+    HUBOT_SEMAPHOREAPP_TRIGGER
 
 
 ## Testing Hubot Locally
