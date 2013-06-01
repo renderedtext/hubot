@@ -17,8 +17,8 @@
 # Author:
 #   rastasheep
 
-client_id = 'ORUE1VLPYRFYCAIZRMOHYYZESVYCEKU1I1BAIOSCIEJMRRRO'
-client_secret = 'NPXT4T1Z0NUUJNBF5NKGDYBUI3WVICVDY4H4JLRUIBK4WMY4'
+client_id = process.env.FOURSQUARE_CLIENT_ID
+client_secret = process.env.FOURSQUARE_CLIENT_SECRET
 
 category_food = '4d4b7105d754a06374d81259'
 category_drink = '4d4b7105d754a06376d81259'
