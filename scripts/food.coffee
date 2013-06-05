@@ -8,7 +8,7 @@
 #   None
 #
 # Commands:
-#   I am hungry
+#   need food
 #
 # Author:
 #   Rastko Jokic
