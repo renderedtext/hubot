@@ -4,7 +4,7 @@ This is a version of GitHub's kegerator-powered life embetterment robot, hubot, 
 
 Ada is geek and she lives on [Heroku](https://heroku.com).
 
-She loves to chat on our [Campfire](http://campfirenow.com/) chatroom, poke us while we're working, and that stuff, you know women (joke :smiley:).
+She loves to chat on our [Slack](https://slack.com/) chatroom, poke us while we're working, and that stuff, you know women (joke :smiley:).
 
 **TL;DR** She's pretty cool.
 
@@ -13,12 +13,15 @@ She loves to chat on our [Campfire](http://campfirenow.com/) chatroom, poke us w
 To run this version of hubot + scripts that we use, you will need to set some environment variables.
 
     === rt-hubot Config Vars
+    HEROKU_URL
+
     FOURSQUARE_CLIENT_ID
     FOURSQUARE_CLIENT_SECRET
-    HEROKU_URL
-    HUBOT_CAMPFIRE_ACCOUNT
-    HUBOT_CAMPFIRE_ROOMS
-    HUBOT_CAMPFIRE_TOKEN
+
+    HUBOT_SLACK_TOKEN
+    HUBOT_SLACK_TEAM
+    HUBOT_SLACK_BOTNAME
+
     REDISTOGO_URL
     HUBOT_SEMAPHOREAPP_AUTH_TOKEN
     HUBOT_SEMAPHOREAPP_TRIGGER
