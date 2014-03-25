@@ -1,1 +1,1 @@
-web: bin/hubot -a campfire -n ada
+web: bin/hubot -a slack -n ada
