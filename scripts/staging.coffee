@@ -37,16 +37,30 @@ module.exports = (robot) ->
     stage.user = ""
     stage.date = ""
 
-
-
+  robot.respond /stg (h|help|--help)/i, (msg) ->
+    res = ""
+    res += "*stg help* - Shows this help\n"
+    res += "*stg list* - Lists all stages\n"
+    res += "*stg conq* <name> - Conquares a stage\n"
+    res += "*stg release* <name> - Releases a stage\n"
+    res += "\nShortcuts\n"
+    res += "*stg h* - Alias for help\n"
+    res += "*stg l* - Alias for list\n"
+    res += "*stg c <name>* - Alias for conquer\n"
+    res += "*stg r <name>* - Alias for release\n"
+    res += "\nStage managment\n"
+    res += "*stg add <name>* - Adds a new stage\n"
+    res += "*stg remove <name>* - Removes a stage\n"
+    res += "*stg --reset* - Removes all stages\n"
+    msg.send(res)
 
   robot.respond /stg (l|list)$/i, (msg) ->
     response = "\n"
     for stage_name, stage of robot.brain.data.staging
       if stage.status == "free"
-        response += "#{stage_name}: free\n"
+        response += "*#{stage_name}*: :free:\n"
       else
-        response += "#{stage_name}: #{stage.status} by #{stage.user} #{prettyDate(stage.date)}\n"
+        response += "*#{stage_name}*: #{stage.status} by *#{stage.user}* #{prettyDate(stage.date)}\n"
 
     msg.send(response)
 
