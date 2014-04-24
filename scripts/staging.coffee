@@ -37,7 +37,7 @@ module.exports = (robot) ->
     stage.user = ""
     stage.date = ""
 
-  robot.respond /stg (h|help|--help)/i, (msg) ->
+  robot.hear /^stg (h|help|--help)/i, (msg) ->
     res = ""
     res += "*stg help* - Shows this help\n"
     res += "*stg list* - Lists all stages\n"
@@ -46,6 +46,8 @@ module.exports = (robot) ->
     res += "\nShortcuts\n"
     res += "*stg h* - Alias for help\n"
     res += "*stg l* - Alias for list\n"
+    res += "*stg ls* - Alias for list\n"
+    res += "*stg ls -lah* - Alias for list\n"
     res += "*stg c <name>* - Alias for conquer\n"
     res += "*stg r <name>* - Alias for release\n"
     res += "\nStage managment\n"
@@ -54,7 +56,7 @@ module.exports = (robot) ->
     res += "*stg --reset* - Removes all stages\n"
     msg.send(res)
 
-  robot.respond /stg (l|list)$/i, (msg) ->
+  robot.hear /stg (l|ls|ls -lah|list)$/i, (msg) ->
     response = "\n"
     for stage_name, stage of robot.brain.data.staging
       if stage.status == "free"
@@ -65,7 +67,7 @@ module.exports = (robot) ->
     msg.send(response)
 
 
-  robot.respond /stg (c|conq) (.+)$/i, (msg) ->
+  robot.hear /stg (c|conq) (.+)$/i, (msg) ->
     user  = sender(msg)
     stage = msg.match[2]
 
@@ -78,7 +80,7 @@ module.exports = (robot) ->
       msg.send("stage #{stage} does not exist")
 
 
-   robot.respond /stg (r|release) (.+)$/i, (msg) ->
+   robot.hear /stg (r|release) (.+)$/i, (msg) ->
     user = sender(msg)
     stage = msg.match[2]
 
@@ -88,12 +90,12 @@ module.exports = (robot) ->
     else
       msg.send("stage #{stage} does not exist")
 
-   robot.respond /stg --reset/i, (msg) ->
+   robot.hear /stg --reset/i, (msg) ->
      delete robot.brain.data.staging
      robot.brain.data.staging = {}
      msg.send("all stagings are now removed")
 
-   robot.respond /stg add (.*)/i, (msg) ->
+   robot.hear /stg add (.*)/i, (msg) ->
      stage_name = msg.match[1]
 
      if exists(stage_name)
@@ -106,7 +108,7 @@ module.exports = (robot) ->
      stage.date = ""
      msg.send("stage #{stage_name} is added")
 
-   robot.respond /stg remove (.*)/i, (msg) ->
+   robot.hear /stg remove (.*)/i, (msg) ->
      stage_name = msg.match[1]
 
      if not exists(stage_name)
