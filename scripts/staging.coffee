@@ -9,6 +9,8 @@
 Util = require("util")
 moment = require("moment")
 
+expireTime = 28800000
+
 module.exports = (robot) ->
 
   robot.brain.data.staging = {}
@@ -23,7 +25,8 @@ module.exports = (robot) ->
     stage of robot.brain.data.staging
 
   is_free = (stage) ->
-    exists(stage) and robot.brain.data.staging[stage].status == "free"
+    expired = (Date.now() - robot.brain.data.staging[stage].date) > expireTime
+    (exists(stage) and robot.brain.data.staging[stage].status == "free") or expired
 
   conquer = (stage_name, user) ->
     stage = {}
@@ -55,12 +58,15 @@ module.exports = (robot) ->
     res += "*stg add <name>* - Adds a new stage\n"
     res += "*stg remove <name>* - Removes a stage\n"
     res += "*stg --reset* - Removes all stages\n"
+    res += "\n"
+    res += "Note: your conquer will automatically expire after 8 hours"
     msg.send(res)
 
   robot.hear /stg (l|ls|ls -lah|list)$/i, (msg) ->
     response = "\n"
     for stage_name, stage of robot.brain.data.staging
-      if stage.status == "free"
+      console.log(stage_name, is_free(stage_name))
+      if is_free(stage_name)
         response += "*#{stage_name}*: :free:\n"
       else
         response += "*#{stage_name}*: #{stage.status} by *#{stage.user}* #{prettyDate(stage.date)}\n"
