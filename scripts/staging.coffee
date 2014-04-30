@@ -7,13 +7,14 @@
 #   hubot stg release stage_name - Releases a conquered server
 
 Util = require("util")
+moment = require("moment")
 
 module.exports = (robot) ->
 
   robot.brain.data.staging = {}
 
   prettyDate = (date)->
-    "#{new Date(date).toISOString().substr(0, 19).replace('T', ' ')}"
+    moment(date).fromNow()
 
   sender = (msg) ->
     msg.message.user.name.toLowerCase()
