@@ -30,7 +30,7 @@ module.exports = (robot) ->
 # otherwise null
 #
 parseCommand = (command) ->
-  projectBranchServer = command.match /(.*)\/(.*)\s+to\s+(.*)/ # project/branch to server
+  projectBranchServer = command.match /(\w*)\/(.*)\s+to\s+(.*)/ # project/branch to server
   projectBranch       = command.match /(.*)\s+to\s+(.*)/       # project to server
 
   switch
