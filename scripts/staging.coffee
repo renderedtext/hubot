@@ -2,14 +2,16 @@
 #   Managment of staging servers
 #
 # Commands:
-#   hubot stg conq stage_name - Conquers a staging server
-#   hubot stg list - Lists the status of conquered servers
-#   hubot stg release stage_name - Releases a conquered server
+#   list - Lists the status of conquered servers
+#   flag <stage_name> - Flags a staging server
+#   rel  <stage_name> - Releases a conquered server
 
 Util = require("util")
 moment = require("moment")
 
 expireTime = 28800000
+
+
 
 module.exports = (robot) ->
 
@@ -21,12 +23,21 @@ module.exports = (robot) ->
   sender = (msg) ->
     msg.message.user.name.toLowerCase()
 
+  room = (msg) ->
+    msg.message.user.room
+
   exists = (stage) ->
     stage of robot.brain.data.staging
 
   is_free = (stage) ->
     expired = (Date.now() - robot.brain.data.staging[stage].date) > expireTime
     (exists(stage) and robot.brain.data.staging[stage].status == "free") or expired
+
+  staging_list = () ->
+    for stage_name, stage of robot.brain.data.staging
+      title: stage_name
+      value: (if is_free(stage_name) then "free" else stage.user)
+      short: true
 
   conquer = (stage_name, user) ->
     stage = {}
@@ -41,86 +52,103 @@ module.exports = (robot) ->
     stage.user = ""
     stage.date = ""
 
-  robot.hear /^stg (h|help|--help)/i, (msg) ->
-    res = ""
-    res += "*stg help* - Shows this help\n"
-    res += "*stg list* - Lists all stages\n"
-    res += "*stg conq* <name> - Conquares a stage\n"
-    res += "*stg release* <name> - Releases a stage\n"
-    res += "\nShortcuts\n"
-    res += "*stg h* - Alias for help\n"
-    res += "*stg l* - Alias for list\n"
-    res += "*stg ls* - Alias for list\n"
-    res += "*stg ls -lah* - Alias for list\n"
-    res += "*stg c <name>* - Alias for conquer\n"
-    res += "*stg r <name>* - Alias for release\n"
-    res += "\nStage managment\n"
-    res += "*stg add <name>* - Adds a new stage\n"
-    res += "*stg remove <name>* - Removes a stage\n"
-    res += "*stg --reset* - Removes all stages\n"
-    res += "\n"
-    res += "Note: your conquer will automatically expire after 8 hours"
-    msg.send(res)
-
-  robot.hear /stg (l|ls|ls -lah|list)$/i, (msg) ->
-    response = "\n"
-    for stage_name, stage of robot.brain.data.staging
-      console.log(stage_name, is_free(stage_name))
-      if is_free(stage_name)
-        response += "*#{stage_name}*: :free:\n"
-      else
-        response += "*#{stage_name}*: #{stage.status} by *#{stage.user}* #{prettyDate(stage.date)}\n"
-
-    msg.send(response)
 
 
-  robot.hear /stg (c|conq) (.+)$/i, (msg) ->
+  robot.hear /^(list|ls)$/i, (msg) ->
+    return unless room(msg) == "staging"
+
+    payload =
+      message: msg.message
+      content:
+        text: ""
+        fallback: "Fallback Text"
+        pretext: ""
+        color: "good"
+        fields: staging_list()
+
+    robot.emit "slack-attachment", payload
+
+
+
+  robot.hear /^flag (.+)$/i, (msg) ->
+    return unless room(msg) == "staging"
+
     user  = sender(msg)
-    stage = msg.match[2]
+    stage = msg.match[1]
 
     if exists(stage) and is_free(stage)
       conquer(stage, user)
-      msg.send("#{stage} conquered by #{user}")
+      msg.send "*#{stage}* flagged"
     else if exists(stage)
-      msg.send("can't conquer #{stage}, it is already conquered by #{robot.brain.data.staging[stage].user}")
+      owner = robot.brain.data.staging[stage].user
+      msg.send("#{owner} already flagged #{stage}")
     else
       msg.send("stage #{stage} does not exist")
 
 
-   robot.hear /stg (r|release) (.+)$/i, (msg) ->
-    user = sender(msg)
-    stage = msg.match[2]
+  robot.hear /^rel (.+)$/i, (msg) ->
+    return unless room(msg) == "staging"
+
+    user  = sender(msg)
+    stage = msg.match[1]
 
     if exists(stage)
       release(stage)
-      msg.send("#{stage} released by #{user}")
+      msg.send "*#{stage}* released"
     else
       msg.send("stage #{stage} does not exist")
 
-   robot.hear /stg --reset/i, (msg) ->
-     delete robot.brain.data.staging
-     robot.brain.data.staging = {}
-     msg.send("all stagings are now removed")
 
-   robot.hear /stg add (.*)/i, (msg) ->
-     stage_name = msg.match[1]
+  robot.hear /stg --reset/i, (msg) ->
+    delete robot.brain.data.staging
+    robot.brain.data.staging = {}
+    msg.send("all stagings are now removed")
 
-     if exists(stage_name)
-       msg.send("stage already exists")
-       return
 
-     stage = robot.brain.data.staging[stage_name] = {}
-     stage.status = "free"
-     stage.user = ""
-     stage.date = ""
-     msg.send("stage #{stage_name} is added")
+  robot.hear /stg add (.*)/i, (msg) ->
+    stage_name = msg.match[1]
 
-   robot.hear /stg remove (.*)/i, (msg) ->
-     stage_name = msg.match[1]
+    if exists(stage_name)
+      msg.send("stage already exists")
+      return
 
-     if not exists(stage_name)
-       msg.send("stage does not exist")
-       return
+    stage = robot.brain.data.staging[stage_name] = {}
+    stage.status = "free"
+    stage.user = ""
+    stage.date = ""
+    msg.send("stage #{stage_name} is added")
 
-     delete robot.brain.data.staging[stage_name]
-     msg.send("stage #{stage_name} is removed")
+
+  robot.hear /stg remove (.*)/i, (msg) ->
+    stage_name = msg.match[1]
+
+    if not exists(stage_name)
+      msg.send("stage does not exist")
+      return
+
+    delete robot.brain.data.staging[stage_name]
+    msg.send("stage #{stage_name} is removed")
+
+
+  robot.hear /^help$/i, (msg) ->
+    return unless room(msg) == "staging"
+
+    help = [
+      "> *BASICS*"
+      "> "
+      "> *help* - Shows this help"
+      "> *ls*   - Lists all stages"
+      "> "
+      "> *flag* <name> - Flag a stage"
+      "> *rel*  <name> - Releases a stage"
+      "> "
+      "> *STAGE MANAGMENT*"
+      "> "
+      "> *stg add <name>* - Adds a new stage"
+      "> *stg remove <name>* - Removes a stage"
+      "> *stg --reset* - Removes all stages"
+      "> "
+      "> *Note*: your flag will automatically expire after 8 hours"
+    ]
+
+    msg.send(help.join("\n"))
