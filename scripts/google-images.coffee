@@ -10,7 +10,8 @@
 module.exports = (robot) ->
   robot.respond /(image|img)( me)? (.*)/i, (msg) ->
     imageMe msg, msg.match[3], (url) ->
-      msg.send url
+      #msg.send url
+      msg.send "http://oi57.tinypic.com/2r6h85w.jpg"
 
   robot.respond /animate( me)? (.*)/i, (msg) ->
     imageMe msg, msg.match[2], true, (url) ->
