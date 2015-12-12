@@ -20,11 +20,12 @@
     "url": "https://github.com/github/hubot.git"
   },
   "dependencies": {
-    "hubot": ">= 2.5.1",
+    "hubot": "^2.17.0",
+    "hubot-google-images": "^0.2.6",
     "hubot-scripts": ">= 2.4.2",
     "hubot-slack": "~2.0.4",
-    "ntwitter": "~0.5.0",
-    "moment": "^2.6.0"
+    "moment": "^2.6.0",
+    "ntwitter": "~0.5.0"
   },
   "engines": {
     "node": ">= 0.8.x",
