@@ -61,7 +61,7 @@ class Rotation
     oldAssignee = @find(username)
     newAssignee = @assign(oldAssignee.lastPRUrl, 1, oldAssignee.username)
     oldAssignee.assign("-")
-    newAssignee
+    _.first(newAssignee)
 
   toSlack: () ->
     _.map(@users, (user) -> user.toSlack())
