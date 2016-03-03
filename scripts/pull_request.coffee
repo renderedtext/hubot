@@ -46,9 +46,11 @@ class Rotation
   remove: (username) ->
     _.remove(@users, { username: username })
 
-  assign: (url, numberOfUsers, requestSender) ->
-    potentialUsers = _.filter(@users, (user) =>
-      user.username != requestSender
+  assign: (url, numberOfUsers, ignoreList) ->
+    ignoredUsers = _.flatten([ignoreList])
+
+    potentialUsers = _.reject(@users, (user) =>
+      _.includes(ignoredUsers, user.username)
     )
     sortedUsers = _.sortBy(potentialUsers, ["lastPRTime"])
 
@@ -57,9 +59,9 @@ class Rotation
       user
     )
 
-  replace: (username) =>
+  replace: (username, requestSender) =>
     oldAssignee = @find(username)
-    newAssignee = @assign(oldAssignee.lastPRUrl, 1, oldAssignee.username)
+    newAssignee = @assign(oldAssignee.lastPRUrl, 1, [oldAssignee.username, requestSender])
     oldAssignee.assign("-")
     _.first(newAssignee)
 
@@ -88,7 +90,7 @@ class Controller
 
   replace: (msg) =>
     username = msg.match[1]
-    newAssignee = @rotation.replace(username)
+    newAssignee = @rotation.replace(username, @_sender(msg))
     msg.send("Reassigned #{newAssignee.lastPRUrl} to #{newAssignee.toString()}")
 
   add: (msg) =>
@@ -128,8 +130,7 @@ class Controller
 
   assign: (msg) =>
     url = msg.match[1]
-    sender = "@#{msg.message.user.name.toLowerCase()}"
-    assignees =  @rotation.assign(url, 2, sender)
+    assignees =  @rotation.assign(url, 2, @_sender(msg))
 
     msg.send("Assigned #{url} to #{assignees[0].toString()} and #{assignees[1].toString()}")
 
@@ -146,6 +147,9 @@ class Controller
        hubot pr list - List all users in rotation, with time of last assignment
     """
     msg.send(description)
+
+  _sender: (msg) =>
+    "@#{msg.message.user.name.toLowerCase()}"
 
 module.exports = (robot) ->
   ctrl = new Controller(robot)
