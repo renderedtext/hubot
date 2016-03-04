@@ -1,5 +1,6 @@
 # Description:
-#   Pull Request processing system
+#   Room aware Pull Request processing system
+#   Only only dependency is @username format (with at)
 #
 # Commands:
 #   hubot pr assign <PR-LINK> - Asks hubot to assign PR
@@ -13,21 +14,20 @@ _ = require("lodash")
 moment = require("moment")
 
 class Rotation
-  constructor: (@robot) ->
-    @robot.brain.on("loaded", =>
-      @users = []
+  constructor: (@robot, @room) ->
+    @users = []
+    @robot.brain.data.pullRequest ||= {}
+    dataStore = @robot.brain.data.pullRequest[@room]
 
-      if @robot.brain.data.pr
-        @users = _.map(@robot.brain.data.pr, (userData) ->
-          new User(userData)
-        )
-        console.log("Loaded #{@users.length} users")
-        console.log("Users #{JSON.stringify(@users)}")
-    )
+    if dataStore
+      @users = _.map(dataStore, (userData) ->
+        new User(userData)
+      )
+      console.log("Loaded #{@users.length} users")
+      console.log("Users #{JSON.stringify(@users)}")
 
-    @robot.brain.on("save", =>
-      @robot.brain.data.pr = @users
-    )
+  save: () =>
+    @robot.brain.data.pullRequest[@room] = @users
 
   find: (username) ->
     _.find(@users, {"username":username})
@@ -86,37 +86,47 @@ class User
 
 class Controller
   constructor: (@robot) ->
-    @rotation = new Rotation(robot)
+    @rotations = {}
+    @robot.brain.on("save", =>
+      for rotationName, rotation of @rotations
+        rotation.save()
+    )
 
   replace: (msg) =>
     username = msg.match[1]
-    newAssignee = @rotation.replace(username, @_sender(msg))
+    rotation = @_findRotation(msg)
+
+    newAssignee = rotation.replace(username, @_sender(msg))
     msg.send("Reassigned #{newAssignee.lastPRUrl} to #{newAssignee.toString()}")
 
   add: (msg) =>
     username = msg.match[1]
+    rotation = @_findRotation(msg)
 
-    if @rotation.exists(username)
+    if rotation.exists(username)
       msg.send("User already exists")
       return
 
-    @rotation.add(username)
+    rotation.add(username)
     msg.send("User #{username} is successfully added")
 
   remove: (msg) =>
     username = msg.match[1]
+    rotation = @_findRotation(msg)
 
-    if not @rotation.exists(username)
+    if not rotation.exists(username)
       msg.send("User #{username} does not exist")
       return
 
-    @rotation.remove(username)
+    rotation.remove(username)
     msg.send("User #{username} is successfully removed")
 
   listTxt: (msg) =>
-    msg.send("Rotation: #{JSON.stringify(@rotation.toSlack())}")
+    rotation = @_findRotation(msg)
+    msg.send("Rotation: #{JSON.stringify(rotation.toSlack())}")
 
   list: (msg) =>
+    rotation = @_findRotation(msg)
     payload =
       message: msg.message
       content:
@@ -124,14 +134,15 @@ class Controller
         fallback: "Fallback Text"
         pretext: ""
         color: "good"
-        fields: @rotation.toSlack()
+        fields: rotation.toSlack()
 
     @robot.emit "slack-attachment", payload
 
   assign: (msg) =>
     url = msg.match[1]
-    assignees =  @rotation.assign(url, 2, @_sender(msg))
+    rotation = @_findRotation(msg)
 
+    assignees = rotation.assign(url, 2, @_sender(msg))
     msg.send("Assigned #{url} to #{assignees[0].toString()} and #{assignees[1].toString()}")
 
   help: (msg) =>
@@ -150,6 +161,10 @@ class Controller
 
   _sender: (msg) =>
     "@#{msg.message.user.name.toLowerCase()}"
+
+  _findRotation: (msg) =>
+    room = msg.message.room
+    @rotations[room] ||= new Rotation(@robot, room)
 
 module.exports = (robot) ->
   ctrl = new Controller(robot)
