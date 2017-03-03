@@ -25,6 +25,7 @@
     "hubot-scripts": ">=2.16.2",
     "hubot-slack": "^3.4.2",
     "hubot-wikipedia": "0.0.4",
+    "hubot-youtube": "^1.0.2",
     "lodash": "^4.6.1",
     "moment": "^2.12.0",
     "ntwitter": "~0.5.0"
