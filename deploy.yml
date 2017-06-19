@@ -1,0 +1,30 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hubot
+spec:
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: hubot
+    spec:
+      containers:
+      - name: hubot
+        image: renderedtext/hubot:latest
+        env:
+          - name: HUBOT_SLACK_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hubot-secrets
+                key: HUBOT_SLACK_TOKEN
+          - name: HUBOT_GOOGLE_CSE_ID
+            valueFrom:
+              secretKeyRef:
+                name: hubot-secrets
+                key: HUBOT_GOOGLE_CSE_ID
+          - name: HUBOT_GOOGLE_CSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: hubot-secrets
+                key: HUBOT_GOOGLE_CSE_KEY
