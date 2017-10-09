@@ -22,9 +22,11 @@ To run this version of hubot + scripts that we use, you will need to set some en
     HUBOT_SLACK_TEAM
     HUBOT_SLACK_BOTNAME
 
-    REDISTOGO_URL
+    REDIS_URL
     HUBOT_SEMAPHOREAPP_AUTH_TOKEN
     HUBOT_SEMAPHOREAPP_TRIGGER
+    HUBOT_GOOGLE_CSE_ID
+    HUBOT_GOOGLE_CSE_KEY
 
 
 ## Testing Hubot Locally
@@ -76,6 +78,18 @@ Please check out the [deploying hubot onto UNIX][deploy-unix] and
 [deploy-heroku]: https://github.com/github/hubot/wiki/Deploying-Hubot-onto-Heroku
 [deploy-unix]: https://github.com/github/hubot/wiki/Deploying-Hubot-onto-UNIX
 [deploy-windows]: https://github.com/github/hubot/wiki/Deploying-Hubot-onto-Windows
+
+#### Deploy to [Kubernetes][kubernetes]
+
+You can use our manifest files in root directory to deploy Ada on your [Kubernetes][kubernetes] cluster:
+
+- Use `minikube.yml` if you want to try it out on your local [minikube][minikube] cluster.
+
+- We use `deploy.yml` to deploy Ada on [GKE][gke].
+
+[kubernetes]: https://kubernetes.io/
+[gke]: https://cloud.google.com/container-engine/
+[minikube]: https://kubernetes.io/docs/getting-started-guides/minikube/
 
 ## Restart the bot
 
