@@ -1,0 +1,11 @@
+version: "2.0"
+
+services:
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - HUBOT_SLACK_TOKEN
+      - HUBOT_GOOGLE_CSE_ID
+      - HUBOT_GOOGLE_CSE_KEY
