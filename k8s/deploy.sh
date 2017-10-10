@@ -25,5 +25,5 @@ echo "Setting up kubectl..."
 gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
 
 echo "Deploying to cluster..."
-kubectl apply -f /tmp/deploy.yml --validate=false
+kubectl apply -f /tmp/deploy.yml
 kubectl describe deployment hubot
