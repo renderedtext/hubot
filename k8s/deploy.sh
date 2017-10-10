@@ -5,7 +5,7 @@ echo "Rendering deploy.yml..."
   require "erb"
   require "yaml"
 
-  image = ERB.fetch("image")
+  image = ENV.fetch("image")
   erb = ERB.new(File.read("deploy.yml.erb"))
   yml = YAML.load(erb.result(binding))
   File.write("/tmp/deploy.yml", yml.to_yaml)
