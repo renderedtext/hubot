@@ -2,4 +2,3 @@ node_modules
 .hubot_history
 npm-debug.log
 secrets.yml
-deploy.yml
