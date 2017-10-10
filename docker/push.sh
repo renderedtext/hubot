@@ -21,3 +21,14 @@ echo "Pushing image to DockerHub"
 docker push $image
 
 echo "Image pushed $image"
+
+/usr/bin/env ruby <<-EORUBY
+  require "erb"
+  require "yaml"
+
+  image = "`echo $image`"
+  erb = ERB.new(File.read("deploy.yml.erb"))
+  yml = YAML.load(erb.result(binding))
+  File.write("deploy.yml", yml.to_yaml)
+EORUBY
+echo "deploy.yml created"

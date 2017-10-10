@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: hubot
-        image: renderedtext/hubot:latest
+        image: <%= image %>
         env:
           - name: HUBOT_SLACK_TOKEN
             valueFrom:
