@@ -9,3 +9,6 @@ build:
 
 push:
 	docker/push.sh
+
+deploy:
+	k8s/deploy.sh
