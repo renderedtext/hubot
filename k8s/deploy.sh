@@ -7,7 +7,7 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo apt-get update && sudo apt-get install -y google-cloud-sdk kubectl
 
 echo "Setting up gcloud..."
-gcloud auth activate-service-account $SERVICE_ACCOUNT_NAME --key-file service_account.json
+gcloud auth activate-service-account $SERVICE_ACCOUNT_NAME --key-file ~/service_account.json
 gcloud config set project semaphore-stg
 
 echo "Setting up kubectl..."
