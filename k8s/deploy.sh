@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+echo "Rendering deploy.yml..."
+/usr/bin/env ruby <<-EORUBY
+  require "erb"
+  require "yaml"
+
+  image = ENV.fetch("image")
+  erb = ERB.new(File.read("deploy.yml.erb"))
+  yml = YAML.load(erb.result(binding))
+  File.write("/tmp/deploy.yml", yml.to_yaml)
+EORUBY
+
 echo "Installing gcloud..."
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
 echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -14,5 +25,5 @@ echo "Setting up kubectl..."
 gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
 
 echo "Deploying to cluster..."
-kubectl apply -f deploy.yml --validate=false
+kubectl apply -f /tmp/deploy.yml
 kubectl describe deployment hubot
