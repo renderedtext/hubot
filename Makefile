@@ -8,7 +8,7 @@ build:
 	docker/build.sh
 
 push:
-	docker/push.sh
+	docker/tag | xargs docker/push.sh
 
 deploy:
-	k8s/deploy.sh
+	docker/tag | xargs k8s/deploy.sh
