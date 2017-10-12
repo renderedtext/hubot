@@ -56,7 +56,7 @@ module.exports = (robot) ->
 
   robot.hear /^(list|ls)$/i, (msg) ->
     return unless room(msg) == "staging"
-    msg.send(
+    response =
       attachments: [
         {
           text: ""
@@ -66,7 +66,9 @@ module.exports = (robot) ->
           fields: staging_list()
         }
       ]
-    )
+    console.log(staging_list())
+    console.log(response)
+    msg.send(response)
 
 
 

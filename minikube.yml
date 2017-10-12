@@ -46,6 +46,8 @@ spec:
       - name: hubot
         image: renderedtext/hubot:latest
         env:
+          - name: HUBOT_LOG_LEVEL
+            value: debug
           - name: HUBOT_SLACK_TOKEN
             valueFrom:
               secretKeyRef:
