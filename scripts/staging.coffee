@@ -56,6 +56,7 @@ module.exports = (robot) ->
 
   robot.hear /^(list|ls)$/i, (msg) ->
     return unless room(msg) == "staging"
+    console.log("Come on Ada! -- entering list")
     response =
       attachments: [
         {
