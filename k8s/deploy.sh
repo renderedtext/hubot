@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export image=$1
+
 echo "Rendering deploy.yml..."
 /usr/bin/env ruby <<-EORUBY
   require "erb"
