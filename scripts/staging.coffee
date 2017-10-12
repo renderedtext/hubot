@@ -56,17 +56,17 @@ module.exports = (robot) ->
 
   robot.hear /^(list|ls)$/i, (msg) ->
     return unless room(msg) == "staging"
-
-    payload =
-      message: msg.message
-      content:
-        text: ""
-        fallback: "Fallback Text"
-        pretext: ""
-        color: "good"
-        fields: staging_list()
-
-    robot.emit "slack-attachment", payload
+    msg.send(
+      attachments: [
+        {
+          text: ""
+          fallback: "Ada list staging"
+          pretext: ""
+          color: "good"
+          fields: staging_list()
+        }
+      ]
+    )
 
 
 
