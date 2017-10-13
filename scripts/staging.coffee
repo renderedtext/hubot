@@ -16,6 +16,7 @@ expireTime = 28800000
 module.exports = (robot) ->
 
   robot.brain.data.staging = {}
+  stagingRoomId = "C029L1FAL"
 
   prettyDate = (date)->
     moment(date).fromNow()
@@ -23,8 +24,10 @@ module.exports = (robot) ->
   sender = (msg) ->
     msg.message.user.name.toLowerCase()
 
-  room = (msg) ->
-    msg.message.user.room
+  isStagingRoom = (msg) ->
+    roomId = msg.message.user.room
+    console.log("console.log -- Room ID: #{roomId}")
+    return roomId == stagingRoomId
 
   exists = (stage) ->
     stage of robot.brain.data.staging
@@ -55,8 +58,7 @@ module.exports = (robot) ->
 
 
   robot.hear /^(list|ls)$/i, (msg) ->
-    return unless room(msg) == "staging"
-    console.log("Come on Ada! -- entering list")
+    return unless isStagingRoom
     response =
       attachments: [
         {
@@ -67,14 +69,12 @@ module.exports = (robot) ->
           fields: staging_list()
         }
       ]
-    console.log(staging_list())
-    console.log(response)
     msg.send(response)
 
 
 
   robot.hear /^flag (.+)$/i, (msg) ->
-    return unless room(msg) == "staging"
+    return unless isStagingRoom
 
     user  = sender(msg)
     stage = msg.match[1]
@@ -90,7 +90,7 @@ module.exports = (robot) ->
 
 
   robot.hear /^rel (.+)$/i, (msg) ->
-    return unless room(msg) == "staging"
+    return unless isStagingRoom
 
     user  = sender(msg)
     stage = msg.match[1]
@@ -103,12 +103,16 @@ module.exports = (robot) ->
 
 
   robot.hear /stg --reset/i, (msg) ->
+    return unless isStagingRoom
+
     delete robot.brain.data.staging
     robot.brain.data.staging = {}
     msg.send("all stagings are now removed")
 
 
   robot.hear /stg add (.*)/i, (msg) ->
+    return unless isStagingRoom
+
     stage_name = msg.match[1]
 
     if exists(stage_name)
@@ -123,6 +127,8 @@ module.exports = (robot) ->
 
 
   robot.hear /stg remove (.*)/i, (msg) ->
+    return unless isStagingRoom
+
     stage_name = msg.match[1]
 
     if not exists(stage_name)
@@ -134,7 +140,7 @@ module.exports = (robot) ->
 
 
   robot.hear /^help$/i, (msg) ->
-    return unless room(msg) == "staging"
+    return unless isStagingRoom
 
     help = [
       "> *BASICS*"
