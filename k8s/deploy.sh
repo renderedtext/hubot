@@ -14,7 +14,7 @@ function install_gcloud {
 }
 
 function create_deployment {
-  kubectl apply -f /tmp/deploy.yml
+  kubectl apply -f /tmp/deploy.yml --record
   kubectl describe deployment hubot
 }
 
