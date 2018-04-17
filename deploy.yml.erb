@@ -14,7 +14,7 @@ spec:
         image: <%= image %>
         env:
           - name: HUBOT_LOG_LEVEL
-            value: debug
+            value: info
           - name: HUBOT_SLACK_TOKEN
             valueFrom:
               secretKeyRef:
